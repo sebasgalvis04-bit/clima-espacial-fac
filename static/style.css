@@ -1,0 +1,233 @@
+/* =====================================================
+   ================= RESET GLOBAL ======================
+   ===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+/* =====================================================
+   ================= ESTILO GENERAL ====================
+   ===================================================== */
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at top, #001528, #020617);
+  color: #d7f3ff;
+  text-align: center;
+  padding: 30px;
+  overflow-x: auto;
+}
+
+/* =====================================================
+   ================= TÍTULOS ===========================
+   ===================================================== */
+
+h1, h2, h3 {
+  color: #37f0d7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(55, 240, 215, 0.5);
+}
+
+/* =====================================================
+   ================= TARJETAS ==========================
+   ===================================================== */
+
+.tarjeta {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 25px;
+  border-radius: 14px;
+  width: 95%;
+  max-width: 700px;
+  margin: 30px auto;
+  box-shadow: 0 0 20px rgba(0, 200, 255, 0.25);
+  backdrop-filter: blur(6px);
+  text-align: left;
+}
+
+/* =====================================================
+   ================= TABLAS ============================
+   ===================================================== */
+
+.tabla-pronostico {
+  width: 100%;
+  margin: 40px auto;
+  border-collapse: collapse;
+  background-color: #0b1b2b;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 200, 255, 0.25);
+  font-size: 0.8rem;
+}
+
+/* Encabezados */
+.tabla-pronostico th {
+  background: linear-gradient(90deg, #002b45, #004d80);
+  color: #ffffff;
+  padding: 8px;
+  border: 1px solid #1e2d3d;
+  font-weight: 600;
+}
+
+/* Celdas */
+.tabla-pronostico td {
+  padding: 6px;
+  border: 1px solid #1e2d3d;
+  height: 22px;
+}
+
+/* Hover */
+.tabla-pronostico td:hover {
+  outline: 1px solid #37f0d7;
+}
+
+/* =====================================================
+   ============ SEPARADOR TABLA ========================
+   ===================================================== */
+
+.separador {
+  background-color: #1c2833;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+  padding: 8px;
+}
+
+/* =====================================================
+   ============ ESCALA OFICIAL NOAA ====================
+   ===================================================== */
+.nivel-verde-oscuro {
+  background-color: #2e7d32;   /* Verde institucional */
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.nivel-amarillo {
+  background-color: #fff200;   /* Amarillo alerta menor */
+  color: #000000;
+  font-weight: bold;
+}
+
+.nivel-naranja {
+  background-color: #ff9800;   /* Naranja moderado */
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.nivel-naranja-oscuro {
+  background-color: #e65100;   /* Naranja fuerte */
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.nivel-rojo {
+  background-color: #d32f2f;   /* Rojo severo */
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.nivel-vinotinto {
+  background-color: #7b0000;   /* Extreme */
+  color: #ffffff;
+  font-weight: bold;
+}
+
+
+/* =====================================================
+   ============ COLORES GEOMAGNÉTICOS ==================
+   ===================================================== */
+
+/* G0-G4 */
+.kp-verde {
+  background-color: #1b5e20;
+}
+
+/* G1 */
+.kp-amarillo {
+  background-color: #fbc02d;
+}
+
+/* G2 */
+.kp-naranja {
+  background-color: #f57c00;
+}
+
+/* G3-G5 */
+.kp-rojo {
+  background-color: #c62828;
+}
+
+/* =====================================================
+   ================= BOTONES ===========================
+   ===================================================== */
+
+button {
+  background-color: #1fdfec;
+  color: #002;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
+}
+
+button:hover {
+  background-color: #00bcd4;
+  transform: scale(1.05);
+}
+
+/* =====================================================
+   ================= IMÁGENES ==========================
+   ===================================================== */
+.imagen-card {
+  background: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,200,255,0.25);
+  width: 420px;
+}
+
+.imagen-card h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.contenedor-imagenes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  margin: 40px 0;
+}
+
+.contenedor-imagenes img {
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 0 18px rgba(0, 200, 255, 0.35);
+  transition: 0.3s ease;
+}
+
+.contenedor-imagenes img:hover {
+  transform: scale(1.05);
+}
+
+/* =====================================================
+   ================= FOOTER ============================
+   ===================================================== */
+
+footer {
+  margin-top: 60px;
+  padding: 15px;
+  font-size: 14px;
+  color: #9bdfff;
+  opacity: 0.8;
+}

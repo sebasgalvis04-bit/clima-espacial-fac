@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clima Espacial NOAA</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+
+<script>
+function actualizarRelojUTC() {
+    const ahora = new Date();
+
+    // Convertir a UTC
+    const año = ahora.getUTCFullYear();
+    const mes = String(ahora.getUTCMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getUTCDate()).padStart(2, '0');
+
+    const horas = String(ahora.getUTCHours()).padStart(2, '0');
+    const minutos = String(ahora.getUTCMinutes()).padStart(2, '0');
+    const segundos = String(ahora.getUTCSeconds()).padStart(2, '0');
+
+    const formato = `${año}-${mes}-${dia} ${horas}:${minutos}:${segundos} UTC`;
+
+    document.getElementById("reloj-utc").textContent = formato;
+}
+
+// Actualizar cada segundo
+setInterval(actualizarRelojUTC, 1000);
+
+// Ejecutar inmediatamente
+actualizarRelojUTC();
+</script>
+
+
+
+<body>
+
+<header class="header-fac">
+  <div class="logos-fac">
+    <img src="{{ url_for('static', filename='images/logo_doble_1.png') }}">
+    <img src="{{ url_for('static', filename='images/logo_doble.png') }}">
+  </div>
+
+</header>
+<h1>Space Weather Report</h1>
+
+
+<!-- ================= TARJETA RESUMEN ================= -->
+<div class="tarjeta">
+
+  {% if datos.Alerta_Geomagnetica %}
+  <div class="alerta nivel-naranja" style="margin-bottom:15px;">
+    {{ datos.Alerta_Geomagnetica }}
+  </div>
+  {% endif %}
+
+  <p><strong>Emition Date:</strong> {{ datos.fecha_emision }}</p>
+
+  <p>
+    <strong>Maximum Expected Kp:</strong>
+    {{ datos.Kp_maximo }}
+    ({{ datos.Escala_G }})
+  </p>
+
+  <p>
+    <strong>Observed Kp:</strong>
+    {{ datos.kp_real }}
+    ({{ datos.kp_real_g }})
+  </p>
+
+  <p>
+    <strong>Solar Radiation S1+:</strong>
+    {{ datos.Prob_S1 }}
+  </p>
+
+  <p>
+    <strong>Radio Blackouts R1–R2:</strong>
+    {{ datos.Prob_R1_R2 }}
+  </p>
+
+  <p>
+    <strong>Radio Blackouts R3+:</strong>
+    {{ datos.Prob_R3 }}
+  </p>
+
+  <p>
+    <strong>Updated (UTC):</strong>
+    <span id="reloj-utc">{{ datos.fecha_actual }}</span>
+  </p>
+
+</div>
+
+
+<!-- ================= LOGOUT ================= -->
+
+<div style="position: fixed; top: 20px; right: 20px;">
+  <form action="{{ url_for('logout') }}" method="get">
+    <button style="background:#c62828;color:white;">Log out</button>
+  </form>
+</div>
+
+<!-- ================= TABLA OPERACIONAL ================= -->
+
+<section class="panel">
+<h2>SPACE ENVIRONMENT THREATS (Operational View)</h2>
+
+<table class="tabla-pronostico">
+
+<thead>
+<tr>
+  <th>Threat</th>
+  {% for bloque in datos.kp_3h %}
+    <th>
+      {{ bloque.fecha }}<br>
+      {{ bloque.hora }}Z
+    </th>
+  {% endfor %}
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td><strong>Radio Blackouts (R)</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ datos.Clase_R12 }}"></td>
+{% endfor %}
+</tr>
+
+<tr>
+<td><strong>Solar Radiation Storms (S)</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ datos.Clase_S1 }}"></td>
+{% endfor %}
+</tr>
+
+<tr>
+<td><strong>Geomagnetic Storm (G)</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ bloque.color }}"></td>
+{% endfor %}
+</tr>
+
+<tr>
+<td colspan="{{ datos.kp_3h|length + 1 }}" class="separador">
+Possible Affectations
+</td>
+</tr>
+
+<tr>
+<td><strong>Satellite Operations</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ bloque.color }}"></td>
+{% endfor %}
+</tr>
+
+<tr>
+<td><strong>Power Systems</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ bloque.color }}"></td>
+{% endfor %}
+</tr>
+
+<tr>
+<td><strong>HF Communications</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ datos.Clase_R12 }}"></td>
+{% endfor %}
+</tr>
+
+<tr>
+<td><strong>Navigation</strong></td>
+{% for bloque in datos.kp_3h %}
+<td class="{{ bloque.color }}"></td>
+{% endfor %}
+</tr>
+
+</tbody>
+</table>
+</section>
+
+<!-- ================= PROBABILITY ASSESSMENT ================= -->
+
+<section class="panel">
+<h2>Probability Assessment</h2>
+
+<table class="tabla-pronostico">
+<tr>
+  <th>Event</th>
+  <th>Probability</th>
+  <th>Level</th>
+</tr>
+
+<tr>
+  <td>Solar Radiation (S1+)</td>
+  <td>{{ datos.Prob_S1 }}</td>
+  <td class="{{ datos.Clase_S1 }}">
+    {{ datos.Escala_S1 }}
+  </td>
+</tr>
+
+<tr>
+  <td>Radio Blackouts (R1–R2)</td>
+  <td>{{ datos.Prob_R1_R2 }}</td>
+  <td class="{{ datos.Clase_R12 }}">
+    {{ datos.Escala_R12 }}
+  </td>
+</tr>
+
+<tr>
+  <td>Radio Blackouts (R3+)</td>
+  <td>{{ datos.Prob_R3 }}</td>
+  <td class="{{ datos.Clase_R3 }}">
+    {{ datos.Escala_R3 }}
+  </td>
+</tr>
+
+</table>
+</section>
+
+<!-- ================= OPERATIONAL COLOR SCALE ================= -->
+
+<section class="panel">
+<h2>Operational Space Weather Scale</h2>
+
+<table class="tabla-pronostico">
+  <tr>
+    <td class="nivel-verde-oscuro">NO SIGNIFICANT EVENTS</td>
+    <td class="nivel-amarillo">1. MINOR</td>
+    <td class="nivel-naranja">2. MODERATE</td>
+    <td class="nivel-naranja-oscuro">3. STRONG</td>
+    <td class="nivel-rojo">4. SEVERE</td>
+    <td class="nivel-vinotinto">5. EXTREME</td>
+  </tr>
+</table>
+
+</section>
+
+<section class="panel">
+<h2>Current Solar Activity</h2>
+
+<div class="contenedor-imagenes">
+
+  <div class="imagen-card">
+    <h3>Sunspot regions</h3>
+    <img src="{{ url_for('imagen_proxy') }}?url={{ aurora_url }}">
+
+  </div>
+
+  <div class="imagen-card">
+    <h3>Coronal holes</h3>
+    <img src="{{ url_for('imagen_proxy') }}?url={{ sdo_url }}">
+  </div>
+
+</div>
+</section>
+
+
+<!-- ================= DESCARGAS ================= -->
+
+<div style="margin-top:20px;">
+  <button id="descargar-btn">Download view as image</button>
+</div>
+
+<script>
+document.getElementById('descargar-btn').addEventListener('click', function() {
+
+    const elemento = document.body;
+
+    html2canvas(elemento, {
+        scale: 2,
+        useCORS: true
+    }).then(canvas => {
+
+        const link = document.createElement('a');
+        link.download = 'FAC_Space_Weather_Report.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+    });
+
+});
+</script>
+
+
+<div style="text-align:center; margin-top:30px;">
+  <a href="{{ url_for('generar_reporte') }}">
+    <button style="background:#0f9d58; color:white;">
+      📄 Download Official FAC Report (PDF)
+    </button>
+  </a>
+</div>
+
+<footer>
+  Information provided by NOAA<br>
+  Space Operations Center · FAC
+</footer>
+
+</body>
+</html>

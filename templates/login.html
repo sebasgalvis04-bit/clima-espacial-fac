@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- ================= METADATOS ================= -->
+  <meta charset="UTF-8"> <!-- Permite tildes, ñ, etc. -->
+  <title>Acceso al Sistema</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ================= ESTILOS ================= -->
+  <!-- Hoja de estilos principal del sistema -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- ================= ESTILOS DEL LOGIN ================= -->
+  <!-- Se dejan aquí porque son específicos de esta vista -->
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Pantalla completa del login */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+
+    /* Video de fondo */
+    .login-screen video {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+    }
+
+    /* Caja del formulario */
+    .login-box {
+      position: relative;
+      z-index: 2;
+      background: rgba(0,0,0,0.75);
+      padding: 35px;
+      width: 340px;
+      border-radius: 12px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .login-box h2 {
+      color: #37f0d7;
+      margin-bottom: 5px;
+    }
+
+    .login-box p {
+      margin-top: 0;
+      font-size: 0.9em;
+      opacity: 0.85;
+    }
+
+    /* Campos de entrada */
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    /* Botón */
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #00e5ff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background: #00c4db;
+    }
+
+    /* Mensaje de error desde Flask */
+    .error {
+      color: #ff6b6b;
+      margin-top: 12px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===================================================== -->
+<!-- =================== LOGIN SCREEN =================== -->
+<!-- ===================================================== -->
+<div class="login-screen">
+
+  <!-- Video de fondo -->
+  <video autoplay muted loop>
+    <source src="{{ url_for('static', filename='video/fondo.mp4') }}" type="video/mp4">
+    <!-- Texto alternativo si el navegador no soporta video -->
+    Tu navegador no soporta video HTML5.
+  </video>
+
+  <!-- ================================================= -->
+  <!-- =============== FORMULARIO LOGIN ================ -->
+  <!-- ================================================= -->
+  <!-- 
+    method="POST" → Envía datos de forma segura
+    action="{{ url_for('login') }}" → Ruta Flask que procesa el login
+  -->
+  <form class="login-box" method="POST" action="{{ url_for('login') }}">
+
+    <h2>Acceso Restringido</h2>
+    <p>Centro de Operaciones Espaciales</p>
+
+    <!-- Campo usuario -->
+    <!-- name="usuario" debe coincidir EXACTAMENTE con request.form -->
+    <input 
+      type="text"
+      name="usuario"
+      placeholder="Usuario"
+      required
+      autocomplete="username"
+    >
+
+    <!-- Campo contraseña -->
+    <input 
+      type="password"
+      name="clave"
+      placeholder="Contraseña"
+      required
+      autocomplete="current-password"
+    >
+
+    <!-- Botón enviar -->
+    <button type="submit">Ingresar</button>
+
+    <!-- Mensaje de error enviado desde Flask -->
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+  </form>
+</div>
+
+</body>
+</html>
