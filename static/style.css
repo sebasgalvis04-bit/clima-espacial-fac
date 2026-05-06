@@ -1,233 +1,217 @@
-/* =====================================================
-   ================= RESET GLOBAL ======================
-   ===================================================== */
+/* ========================================================= */
+/* 1. CONFIGURACIÓN GENERAL */
+/* ========================================================= */
 
-* {
-  box-sizing: border-box;
+body{
+    background: radial-gradient(circle at 20% 20%, #0b2a44 0%, #071a2c 40%, #04101c 100%);
+    color:#d8f3ff;
+    font-family:Segoe UI;
+    text-align:center;
+    margin:0;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
+/* SOLO PDF en blanco */
+#zona-pdf{
+    background:white;
 }
 
-/* =====================================================
-   ================= ESTILO GENERAL ====================
-   ===================================================== */
+/* ========================================================= */
+/* 2. TITULOS */
+/* ========================================================= */
 
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: radial-gradient(circle at top, #001528, #020617);
-  color: #d7f3ff;
-  text-align: center;
-  padding: 30px;
-  overflow-x: auto;
+h1{
+    color:#4ff3d6;
+    text-shadow:0 0 10px #00ffd5;
 }
 
-/* =====================================================
-   ================= TÍTULOS ===========================
-   ===================================================== */
-
-h1, h2, h3 {
-  color: #37f0d7;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(55, 240, 215, 0.5);
+h2{
+    color:#39ffd4;
 }
 
-/* =====================================================
-   ================= TARJETAS ==========================
-   ===================================================== */
+/* ========================================================= */
+/* 3. TARJETAS */
+/* ========================================================= */
 
-.tarjeta {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 25px;
-  border-radius: 14px;
-  width: 95%;
-  max-width: 700px;
-  margin: 30px auto;
-  box-shadow: 0 0 20px rgba(0, 200, 255, 0.25);
-  backdrop-filter: blur(6px);
-  text-align: left;
+
+.resumen-operacional {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    width: 320px;
+    margin: 20px auto;  
 }
 
-/* =====================================================
-   ================= TABLAS ============================
-   ===================================================== */
-
-.tabla-pronostico {
-  width: 100%;
-  margin: 40px auto;
-  border-collapse: collapse;
-  background-color: #0b1b2b;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 15px rgba(0, 200, 255, 0.25);
-  font-size: 0.8rem;
+.resumen-operacional p {
+    margin: 20px auto;
+    font-size: 14px;
 }
 
-/* Encabezados */
-.tabla-pronostico th {
-  background: linear-gradient(90deg, #002b45, #004d80);
-  color: #ffffff;
-  padding: 8px;
-  border: 1px solid #1e2d3d;
-  font-weight: 600;
+.resumen-operacional hr {
+    border: 0.5px solid #00ffaa;
 }
 
-/* Celdas */
-.tabla-pronostico td {
-  padding: 6px;
-  border: 1px solid #1e2d3d;
-  height: 22px;
+/* ========================================================= */
+/* 4. ALERTAS */
+/* ========================================================= */
+
+.alerta-operacional{
+    width:320px;
+    padding:20px;
+    border-radius:14px;
+    font-size:13px;
+    text-align:center;
+    color:white;
+    box-shadow:0 0 10px rgba(0,255,255,0.2);
 }
 
-/* Hover */
-.tabla-pronostico td:hover {
-  outline: 1px solid #37f0d7;
+/* COLORES EXACTOS NOAA */
+
+.alerta-verde{ background:#006400; }
+.alerta-amarillo{ background:#ffee58; color:black; }
+.alerta-naranja{ background:#ff7b00; color:black; }
+.alerta-naranja-oscuro{ background:#ff5200; }
+.alerta-rojo{ background:#ff0000; }
+.alerta-vinotinto{ background:#990000; }
+
+
+/* ========================================================= */
+/* PUENTE ENTRE BACKEND Y ALERTAS */
+/* ========================================================= */
+
+.nivel-verde-oscuro{ background:#006400; }
+.nivel-amarillo{ background:#ffee58; color:black; }
+.nivel-naranja{ background:#ff7b00; color:black; }
+.nivel-naranja-oscuro{ background:#ff5200; }
+.nivel-rojo{ background:#ff0000; }
+.nivel-vinotinto{ background:#990000; }
+
+    /* ========================================================= */
+    /* 5. HEADER INSTITUCIONAL */
+    /* ========================================================= */
+
+    .encabezado-fac{
+        display:grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items:center;
+        width:100%;
+        margin:30px 0;
+    }
+
+    .bloque-lateral{
+        display:flex;
+        justify-content:center;
+    }
+
+    .bloque-lateral img{
+        width:330px;
+    }
+
+    .bloque-central{
+        text-align:center;
+        font-size:12px;
+        line-height:1.4;
+    }
+
+/* ========================================================= */
+/* 6. TABLA */
+/* ========================================================= */
+
+.tabla-operacional{
+    width:95%;
+    margin:auto;
+    border-collapse:collapse;
 }
 
-/* =====================================================
-   ============ SEPARADOR TABLA ========================
-   ===================================================== */
-
-.separador {
-  background-color: #1c2833;
-  font-weight: bold;
-  color: #ffffff;
-  text-align: center;
-  padding: 8px;
+th{
+    background:#ffffff !important;
+    color:#000000 !important;
+    border:1px solid #999;
+    font-weight:bold;
 }
 
-/* =====================================================
-   ============ ESCALA OFICIAL NOAA ====================
-   ===================================================== */
-.nivel-verde-oscuro {
-  background-color: #2e7d32;   /* Verde institucional */
-  color: #ffffff;
-  font-weight: bold;
+/* encabezados especiales */
+.bloque-dia,
+.bloque-dia-sub,
+.hora{
+    background:#ffffff !important;
+    color:#000000 !important;
 }
 
-.nivel-amarillo {
-  background-color: #fff200;   /* Amarillo alerta menor */
-  color: #000000;
-  font-weight: bold;
+td{
+    border:1px solid #000;
+    height:28px;
 }
 
-.nivel-naranja {
-  background-color: #ff9800;   /* Naranja moderado */
-  color: #ffffff;
-  font-weight: bold;
+/* ========================================================= */
+/* 7. ESCALA NOAA */
+/* ========================================================= */
+
+.lvl0{ background:#006400; }
+.lvl1{ background:#ffee58; color:black; }
+.lvl2{ background:#f5b041; }
+.lvl3{ background:#d35400; }
+.lvl4{ background:#e53935; }
+.lvl5{ background:#990000; }
+
+/* ========================================================= */
+/* 8. BLOQUE NOCHE */
+/* ========================================================= */
+
+.celda-noche{
+    background:black !important;
 }
 
-.nivel-naranja-oscuro {
-  background-color: #e65100;   /* Naranja fuerte */
-  color: #ffffff;
-  font-weight: bold;
+/* ========================================================= */
+/* 9. SEPARACIÓN DE DÍAS */
+/* ========================================================= */
+
+.inicio-dia{
+    border-left:4px solid black;
 }
 
-.nivel-rojo {
-  background-color: #d32f2f;   /* Rojo severo */
-  color: #ffffff;
-  font-weight: bold;
+/* ========================================================= */
+/* IMAGENES SOLARES 2x2 */
+/* ========================================================= */
+
+.contenedor-imagenes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    width:70%;
+    margin:30px auto;
 }
 
-.nivel-vinotinto {
-  background-color: #7b0000;   /* Extreme */
-  color: #ffffff;
-  font-weight: bold;
+.contenedor-imagenes img{
+    width:100%;
+    border-radius:8px;
 }
 
+/* ========================================================= */
+/* CONTENEDOR DE ALERTAS (ALINEACIÓN HORIZONTAL) */
+/* ========================================================= */
 
-/* =====================================================
-   ============ COLORES GEOMAGNÉTICOS ==================
-   ===================================================== */
-
-/* G0-G4 */
-.kp-verde {
-  background-color: #1b5e20;
+.contenedor-alertas{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:60px;
+    margin:40px auto;
+    flex-wrap:wrap; /* por si se reduce pantalla */
 }
 
-/* G1 */
-.kp-amarillo {
-  background-color: #fbc02d;
+/* tarjetas */
+.alerta-operacional{
+    width:300px;
+    min-height:220px;
 }
 
-/* G2 */
-.kp-naranja {
-  background-color: #f57c00;
-}
+/* ========================================================= */
+/* MARGENES GENERALES */
+/* ========================================================= */
 
-/* G3-G5 */
-.kp-rojo {
-  background-color: #c62828;
-}
-
-/* =====================================================
-   ================= BOTONES ===========================
-   ===================================================== */
-
-button {
-  background-color: #1fdfec;
-  color: #002;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
-}
-
-button:hover {
-  background-color: #00bcd4;
-  transform: scale(1.05);
-}
-
-/* =====================================================
-   ================= IMÁGENES ==========================
-   ===================================================== */
-.imagen-card {
-  background: rgba(255,255,255,0.05);
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,200,255,0.25);
-  width: 420px;
-}
-
-.imagen-card h3 {
-  margin-bottom: 10px;
-  font-size: 1rem;
-}
-
-.contenedor-imagenes {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 25px;
-  margin: 40px 0;
-}
-
-.contenedor-imagenes img {
-  width: 320px;
-  border-radius: 12px;
-  box-shadow: 0 0 18px rgba(0, 200, 255, 0.35);
-  transition: 0.3s ease;
-}
-
-.contenedor-imagenes img:hover {
-  transform: scale(1.05);
-}
-
-/* =====================================================
-   ================= FOOTER ============================
-   ===================================================== */
-
-footer {
-  margin-top: 60px;
-  padding: 15px;
-  font-size: 14px;
-  color: #9bdfff;
-  opacity: 0.8;
+#zona-pdf{
+    padding:30px 40px;
+    background:white; /* 🔥 importante para PDF */
+    color:black;
 }

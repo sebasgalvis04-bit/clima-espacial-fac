@@ -1,304 +1,521 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clima Espacial NOAA</title>
+    <!-- ========================================================= -->
+    <!-- HEAD -->
+    <!-- configuracion visual y librerias -->
+    <!-- ========================================================= -->
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
+    <!DOCTYPE html>
 
+    <html>
 
-<script>
-function actualizarRelojUTC() {
-    const ahora = new Date();
+    <head>
 
-    // Convertir a UTC
-    const año = ahora.getUTCFullYear();
-    const mes = String(ahora.getUTCMonth() + 1).padStart(2, '0');
-    const dia = String(ahora.getUTCDate()).padStart(2, '0');
+    <meta charset="UTF-8">
 
-    const horas = String(ahora.getUTCHours()).padStart(2, '0');
-    const minutos = String(ahora.getUTCMinutes()).padStart(2, '0');
-    const segundos = String(ahora.getUTCSeconds()).padStart(2, '0');
+    <title>FAC REPORTE DE CLIMA ESPACIALr</title>
 
-    const formato = `${año}-${mes}-${dia} ${horas}:${minutos}:${segundos} UTC`;
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    document.getElementById("reloj-utc").textContent = formato;
-}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-// Actualizar cada segundo
-setInterval(actualizarRelojUTC, 1000);
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-// Ejecutar inmediatamente
-actualizarRelojUTC();
-</script>
+    </head>
 
 
 
-<body>
+    <body>
 
-<header class="header-fac">
-  <div class="logos-fac">
-    <img src="{{ url_for('static', filename='images/logo_doble_1.png') }}">
-    <img src="{{ url_for('static', filename='images/logo_doble.png') }}">
-  </div>
+    <div id="reporte">
 
-</header>
-<h1>Space Weather Report</h1>
+    <!-- ========================================================= -->
+    <!-- TITULO PRINCIPAL -->
+    <!-- ========================================================= -->
 
-
-<!-- ================= TARJETA RESUMEN ================= -->
-<div class="tarjeta">
-
-  {% if datos.Alerta_Geomagnetica %}
-  <div class="alerta nivel-naranja" style="margin-bottom:15px;">
-    {{ datos.Alerta_Geomagnetica }}
-  </div>
-  {% endif %}
-
-  <p><strong>Emition Date:</strong> {{ datos.fecha_emision }}</p>
-
-  <p>
-    <strong>Maximum Expected Kp:</strong>
-    {{ datos.Kp_maximo }}
-    ({{ datos.Escala_G }})
-  </p>
-
-  <p>
-    <strong>Observed Kp:</strong>
-    {{ datos.kp_real }}
-    ({{ datos.kp_real_g }})
-  </p>
-
-  <p>
-    <strong>Solar Radiation S1+:</strong>
-    {{ datos.Prob_S1 }}
-  </p>
-
-  <p>
-    <strong>Radio Blackouts R1–R2:</strong>
-    {{ datos.Prob_R1_R2 }}
-  </p>
-
-  <p>
-    <strong>Radio Blackouts R3+:</strong>
-    {{ datos.Prob_R3 }}
-  </p>
-
-  <p>
-    <strong>Updated (UTC):</strong>
-    <span id="reloj-utc">{{ datos.fecha_actual }}</span>
-  </p>
-
-</div>
+    <h1>REPORTE DE CLIMA ESPACIAL</h1>
 
 
-<!-- ================= LOGOUT ================= -->
 
-<div style="position: fixed; top: 20px; right: 20px;">
-  <form action="{{ url_for('logout') }}" method="get">
-    <button style="background:#c62828;color:white;">Log out</button>
-  </form>
-</div>
+    <!-- ========================================================= -->
+    <!-- SUMMARY -->
+    <!-- resumen operacional -->
+    <!-- KP max forecast -->
+    <!-- KP observado 24h -->
+    <!-- probabilidades NOAA -->
+    <!-- ========================================================= -->
 
-<!-- ================= TABLA OPERACIONAL ================= -->
+    <div class="resumen-operacional">
 
-<section class="panel">
-<h2>SPACE ENVIRONMENT THREATS (Operational View)</h2>
+        <!-- ⏱️ TIEMPO OPERACIONAL -->
+        <p><b>Hora Local (COL):</b> <span id="hora-col"></span></p>
 
-<table class="tabla-pronostico">
+        <p><b>Hora UTC (Z):</b> <span id="hora-utc"></span></p>
 
-<thead>
+        <p><b>Última actualización NOAA:</b> <span id="ultima-actualizacion"></span></p>
+
+        <p><b>Tiempo desde actualización:</b> <span id="contador"></span></p>
+
+        <hr>
+
+        <!-- 🌍 GEOMAGNÉTICO -->
+        <p>
+        <b>Kp máximo esperado:</b>
+        {{ datos.kp_max }}
+        ({{ datos.g_max }})
+        </p>
+
+        <p>
+        <b>Mayor Kp observado en 24h:</b>
+        {{ datos.kp_obs }}
+        ({{ datos.g_obs }})
+        </p>
+
+        <hr>
+
+        <!-- ☀️ RADIACIÓN -->
+        <p>
+        <b>Probabilidad tormenta radiación S1+:</b>
+        {{ datos.Prob_S1 }}
+        </p>
+
+        <!-- 📡 RADIO -->
+        <p>
+        <b>Probabilidad apagón de radio R1-R2:</b>
+        {{ datos.Prob_R12 }}
+        </p>
+
+        <p>
+        <b>Probabilidad apagón de radio R3+:</b>
+        {{ datos.Prob_R3 }}
+        </p>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- ALERTAS NOAA -->
+    <!-- mensajes operacionales -->
+    <!-- se generan segun KP forecast -->
+    <!-- ========================================================= -->
+
+    <div class="contenedor-alertas">
+
+        {% for alerta in alertas %}
+        <div class="alerta-operacional {{ alerta.clase }}">
+            <h3>{{ alerta.titulo }}</h3>
+            <p class="descripcion-alerta">{{ alerta.descripcion }}</p>
+        </div>
+        {% endfor %}
+
+    </div>
+
+
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- ========================================================= -->
+    <!-- TABLA OPERACIONAL NOAA -->
+    <!-- muestra impacto en sistemas -->
+    <!-- HF communications -->
+    <!-- satellite -->
+    <!-- navigation -->
+    <!-- power -->
+    <!-- ========================================================= -->
+
+<div id="zona-pdf">
+
+    <div class="encabezado-fac">
+
+        <div class="bloque-lateral">
+            <img src="{{ url_for('static', filename='images/logo_doble.png') }}">
+        </div>
+
+        <div class="bloque-central">
+            FUERZA AEROESPACIAL COLOMBIANA<br>
+            COMANDO DE OPERACIONES AÉREAS Y ESPACIALES<br>
+            CENTRO DE OPERACIONES ESPACIALES<br>
+            <b>REPORTE DE CLIMA ESPACIAL</b>
+        </div>
+
+        <div class="bloque-lateral">
+            <img src="{{ url_for('static', filename='images/logo_doble_1.png') }}">
+        </div>
+
+    </div>
+
+    <h2>MATRIZ OPERACIONAL DE PRONÓSTICO (3 DÍAS)</h2>
+
+    <!-- 🔥 IMPORTANTE: LA TABLA VA DENTRO -->
+    <table class="tabla-operacional">
+
+<!-- ================= HEADER FECHAS ================= -->
+
 <tr>
-  <th>Threat</th>
-  {% for bloque in datos.kp_3h %}
-    <th>
-      {{ bloque.fecha }}<br>
-      {{ bloque.hora }}Z
-    </th>
-  {% endfor %}
+    <th rowspan="3" class="columna-tipo">Threat</th>
+
+    {% for f in fechas %}
+        <th colspan="8" class="bloque-dia">
+            {{ f }}
+        </th>
+    {% endfor %}
 </tr>
-</thead>
-
-<tbody>
 
 <tr>
-<td><strong>Radio Blackouts (R)</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ datos.Clase_R12 }}"></td>
+    {% for i in range(3) %}
+        <th colspan="8" class="bloque-dia-sub">
+            Día {{ i+1 }}
+        </th>
+    {% endfor %}
+</tr>
+
+<tr>
+    {% for i in range(3) %}
+        {% for b in time_blocks %}
+            <th class="hora">{{ b }}</th>
+        {% endfor %}
+    {% endfor %}
+</tr>
+
+<!-- ================= FILAS R S G ================= -->
+
+{% for tipo in ["R","S","G"] %}
+<tr>
+
+    <td class="columna-tipo tipo-{{ tipo }}">
+        {{ tipo }}
+    </td>
+
+    {% for d in [1,2,3] %}
+        {% for b in time_blocks %}
+
+        <td class="
+            celda
+
+            {% if tipo == 'R' and b in ['00-03','03-06','06-09'] %}
+                celda-noche
+            {% else %}
+
+                {% set valor = grid[tipo ~ '-' ~ d ~ '-' ~ b] %}
+
+                {% if tipo == 'G' %}
+                    lvl{{ valor }}
+
+                {% elif tipo == 'R' %}
+                    {{ clase_R(valor) }}
+
+                {% elif tipo == 'S' %}
+                    {{ clase_S(valor) }}
+
+                {% endif %}
+
+            {% endif %}
+            {% if b == '00-03' %}inicio-dia{% endif %}
+        ">
+
+            {% if not (tipo == 'R' and b in ['00-03','03-06','06-09']) %}
+                {{ etiqueta_valor(tipo, grid[tipo ~ '-' ~ d ~ '-' ~ b], probs) }}
+            {% endif %}
+        </td>
+
+        {% endfor %}
+    {% endfor %}
+
+</tr>
 {% endfor %}
-</tr>
+
+
+
+<!-- ================= SEPARADOR ================= -->
 
 <tr>
-<td><strong>Solar Radiation Storms (S)</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ datos.Clase_S1 }}"></td>
+    <td colspan="25" class="titulo-afectaciones">
+        POSIBLES AFECTACIONES
+    </td>
+</tr>
+
+<!-- ================= AFECTACIONES ================= -->
+
+{% for a,nombre in {
+    "SAT":"Operaciones Satelitales",
+    "POWER":"Sistemas de Potencia",
+    "HF":"Comunicaciones HF",
+    "NAV":"Navegación GPS"
+}.items() %}
+
+<tr>
+
+    <td class="columna-tipo">
+        {{ nombre }}
+    </td>
+
+    {% for d in [1,2,3] %}
+        {% for b in time_blocks %}
+
+        {% set val = impactos[a ~ '-' ~ d ~ '-' ~ b] %}
+
+        <td class="
+            celda
+
+            {% if val == 0 %}
+                nivel-verde-oscuro
+            {% elif val < 30 %}
+                nivel-amarillo
+            {% elif val < 60 %}
+                nivel-naranja
+            {% else %}
+                nivel-rojo
+            {% endif %}
+
+            {% if b == '00-03' %}inicio-dia{% endif %}
+        ">
+        </td>
+
+        {% endfor %}
+    {% endfor %}
+
+</tr>
+
 {% endfor %}
-</tr>
-
-<tr>
-<td><strong>Geomagnetic Storm (G)</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ bloque.color }}"></td>
-{% endfor %}
-</tr>
-
-<tr>
-<td colspan="{{ datos.kp_3h|length + 1 }}" class="separador">
-Possible Affectations
-</td>
-</tr>
-
-<tr>
-<td><strong>Satellite Operations</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ bloque.color }}"></td>
-{% endfor %}
-</tr>
-
-<tr>
-<td><strong>Power Systems</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ bloque.color }}"></td>
-{% endfor %}
-</tr>
-
-<tr>
-<td><strong>HF Communications</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ datos.Clase_R12 }}"></td>
-{% endfor %}
-</tr>
-
-<tr>
-<td><strong>Navigation</strong></td>
-{% for bloque in datos.kp_3h %}
-<td class="{{ bloque.color }}"></td>
-{% endfor %}
-</tr>
-
-</tbody>
 </table>
-</section>
 
-<!-- ================= PROBABILITY ASSESSMENT ================= -->
+<!-- ========================================================= -->
+<!-- IMAGENES SOLARES -->
+<!-- ========================================================= -->
 
-<section class="panel">
-<h2>Probability Assessment</h2>
-
-<table class="tabla-pronostico">
-<tr>
-  <th>Event</th>
-  <th>Probability</th>
-  <th>Level</th>
-</tr>
-
-<tr>
-  <td>Solar Radiation (S1+)</td>
-  <td>{{ datos.Prob_S1 }}</td>
-  <td class="{{ datos.Clase_S1 }}">
-    {{ datos.Escala_S1 }}
-  </td>
-</tr>
-
-<tr>
-  <td>Radio Blackouts (R1–R2)</td>
-  <td>{{ datos.Prob_R1_R2 }}</td>
-  <td class="{{ datos.Clase_R12 }}">
-    {{ datos.Escala_R12 }}
-  </td>
-</tr>
-
-<tr>
-  <td>Radio Blackouts (R3+)</td>
-  <td>{{ datos.Prob_R3 }}</td>
-  <td class="{{ datos.Clase_R3 }}">
-    {{ datos.Escala_R3 }}
-  </td>
-</tr>
-
-</table>
-</section>
-
-<!-- ================= OPERATIONAL COLOR SCALE ================= -->
-
-<section class="panel">
-<h2>Operational Space Weather Scale</h2>
-
-<table class="tabla-pronostico">
-  <tr>
-    <td class="nivel-verde-oscuro">NO SIGNIFICANT EVENTS</td>
-    <td class="nivel-amarillo">1. MINOR</td>
-    <td class="nivel-naranja">2. MODERATE</td>
-    <td class="nivel-naranja-oscuro">3. STRONG</td>
-    <td class="nivel-rojo">4. SEVERE</td>
-    <td class="nivel-vinotinto">5. EXTREME</td>
-  </tr>
-</table>
-
-</section>
-
-<section class="panel">
-<h2>Current Solar Activity</h2>
+<h2>ACTIVIDAD SOLAR ACTUAL</h2>
 
 <div class="contenedor-imagenes">
 
-  <div class="imagen-card">
-    <h3>Sunspot regions</h3>
-    <img src="{{ url_for('imagen_proxy') }}?url={{ aurora_url }}">
+    <div>
+        <h4>Manchas solares</h4>
+        <img src="{{ url_for('static', filename=imagenes.sunspots) }}">
+    </div>
 
-  </div>
+    <div>
+        <h4>Corona solar EUV</h4>
+        <img src="{{ url_for('static', filename=imagenes.coronal) }}">
+    </div>
 
-  <div class="imagen-card">
-    <h3>Coronal holes</h3>
-    <img src="{{ url_for('imagen_proxy') }}?url={{ sdo_url }}">
-  </div>
+    <div>
+        <h4>Viento solar ENLIL</h4>
+        <img src="{{ url_for('static', filename=imagenes.enlil) }}">
+    </div>
+
+    <div>
+        <h4>Resumen del clima espacial</h4>
+        <img src="{{ url_for('static', filename=imagenes.overview) }}">
+    </div>
 
 </div>
-</section>
 
+</div> <!-- 🔥 CIERRE CORRECTO DE zona-pdf -->
 
-<!-- ================= DESCARGAS ================= -->
-
-<div style="margin-top:20px;">
-  <button id="descargar-btn">Download view as image</button>
-</div>
+<!-- ========================================================= -->
+<!-- SCRIPT PDF (NO SE TOCA LOGICA) -->
+<!-- ========================================================= -->
 
 <script>
-document.getElementById('descargar-btn').addEventListener('click', function() {
 
-    const elemento = document.body;
+async function esperarImagenes(container){
 
-    html2canvas(elemento, {
-        scale: 2,
-        useCORS: true
-    }).then(canvas => {
+    const imagenes = container.querySelectorAll("img");
 
-        const link = document.createElement('a');
-        link.download = 'FAC_Space_Weather_Report.png';
-        link.href = canvas.toDataURL("image/png");
-        link.click();
+    return Promise.all(
+        Array.from(imagenes).map(img => {
 
-    });
+            if (img.complete) return Promise.resolve();
 
-});
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+
+        })
+    );
+}
+
+async function imprimirPDF(){
+
+    try{
+
+        console.log("Generando PDF...");
+
+        const elemento = document.getElementById("zona-pdf");
+
+        await esperarImagenes(elemento);
+
+        const canvas = await html2canvas(elemento,{
+            scale:2
+        });
+
+        const imgData = canvas.toDataURL("image/png");
+
+        const { jsPDF } = window.jspdf;
+
+        const pdf = new jsPDF("landscape","mm","a4");
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        const margen = 10;
+
+        const imgWidth = pageWidth - (margen * 2);
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+
+        const scaleFactor = Math.min(
+            (pageHeight - (margen * 2)) / imgHeight,
+            1
+        );
+
+        pdf.addImage(
+            imgData,
+            "PNG",
+            margen,
+            margen,
+            imgWidth * scaleFactor,
+            imgHeight * scaleFactor
+        );
+
+        pdf.save("REPORTE_FAC_CLIMA_ESPACIAL.pdf");
+
+        console.log("PDF generado correctamente");
+
+    }catch(error){
+
+        console.error("ERROR PDF:", error);
+        alert("Error generando el PDF, revisa consola");
+
+    }
+
+}
+
 </script>
 
 
-<div style="text-align:center; margin-top:30px;">
-  <a href="{{ url_for('generar_reporte') }}">
-    <button style="background:#0f9d58; color:white;">
-      📄 Download Official FAC Report (PDF)
+<script>
+
+async function descargarPNG(){
+
+    try{
+
+        console.log("Generando PNG...");
+
+        const elemento = document.getElementById("zona-pdf");
+
+        await esperarImagenes(elemento);
+
+        const canvas = await html2canvas(elemento,{
+            scale:2
+        });
+
+        const link = document.createElement("a");
+        link.download = "REPORTE_FAC_CLIMA_ESPACIAL.png";
+        link.href = canvas.toDataURL("image/png");
+
+        link.click();
+
+        console.log("PNG generado correctamente");
+
+    }catch(error){
+
+        console.error("ERROR PNG:", error);
+        alert("Error generando PNG");
+
+    }
+
+}
+
+</script>
+
+
+<script>
+
+// 🔥 guardar momento de carga (simula última actualización NOAA)
+let ultimaActualizacion = new Date();
+
+function actualizarReloj() {
+
+    const ahora = new Date();
+
+    // =========================
+    // 🇨🇴 HORA COLOMBIA
+    // =========================
+    const col = new Intl.DateTimeFormat("es-CO", {
+        timeZone: "America/Bogota",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    }).format(ahora);
+
+    document.getElementById("hora-col").innerText = col + " (UTC-5)";
+
+    // =========================
+    // 🌐 HORA UTC (ZULU)
+    // =========================
+    const utc = new Intl.DateTimeFormat("es-CO", {
+        timeZone: "UTC",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    }).format(ahora);
+
+    document.getElementById("hora-utc").innerText = utc + " Z";
+
+    // =========================
+    // 🔄 ÚLTIMA ACTUALIZACIÓN
+    // =========================
+    const ultima = new Intl.DateTimeFormat("es-CO", {
+        timeZone: "America/Bogota",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    }).format(ultimaActualizacion);
+
+    document.getElementById("ultima-actualizacion").innerText = ultima;
+
+    // =========================
+    // ⏱️ CONTADOR
+    // =========================
+    let diff = Math.floor((ahora - ultimaActualizacion) / 1000);
+
+    let h = Math.floor(diff / 3600);
+    let m = Math.floor((diff % 3600) / 60);
+    let s = diff % 60;
+
+    document.getElementById("contador").innerText =
+        `${h}h ${m}m ${s}s`;
+
+}
+
+// actualizar cada segundo
+setInterval(actualizarReloj, 1000);
+
+// ejecutar una vez
+actualizarReloj();
+
+</script>
+
+
+<!-- ========================================================= -->
+<!-- BOTON -->
+<!-- ========================================================= -->
+
+
+<div style="text-align:center; margin:20px;">
+
+    <button onclick="imprimirPDF()">
+        Descargar PDF
     </button>
-  </a>
+
+    <button onclick="descargarPNG()">
+        Descargar PNG
+    </button>
+
 </div>
 
-<footer>
-  Information provided by NOAA<br>
-  Space Operations Center · FAC
-</footer>
+    </body>
 
-</body>
-</html>
+    </html>
