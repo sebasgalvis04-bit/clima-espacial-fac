@@ -955,8 +955,8 @@ def index():
 
     alertas = generar_alertas(forecast, fechas, probs)
 
-
-    enviar_alerta_email(alertas)
+    # se desactiva la alerta para poder ser mas eficientes
+    # enviar_alerta_email(alertas)
 
 
     return render_template(
