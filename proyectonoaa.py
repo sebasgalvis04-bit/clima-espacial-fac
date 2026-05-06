@@ -309,8 +309,11 @@ def obtener_forecast():
 
     url="https://services.swpc.noaa.gov/text/3-day-forecast.txt"
 
-    txt=requests.get(url).text.splitlines()
-
+    try:
+        txt = requests.get(url, timeout=10).text.splitlines()
+    except:
+        return [], []
+        
     tabla=[]
     fechas=[]
 
@@ -444,7 +447,7 @@ def kp_24h():
 
     url="https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json"
 
-    data=requests.get(url).json()
+    data=requests.get(url, timeout=10).json()
 
     valores=[
 
@@ -468,7 +471,7 @@ def obtener_probabilidades():
 
     url="https://services.swpc.noaa.gov/text/3-day-forecast.txt"
 
-    txt=requests.get(url).text
+    txt=requests.get(url,timeout=10).text
 
 
     r12=re.search(r"R1-R2\s+(\d+%)",txt)
